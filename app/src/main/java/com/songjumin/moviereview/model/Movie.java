@@ -4,14 +4,16 @@ public class Movie {
     int vote_count;
     Double vote_average;
     String title;
+    String original_title;
     String release_date;
     String overview;
     String poster_path;
 
-    public Movie(int vote_count, Double vote_average, String title, String release_date, String overview, String poster_path) {
+    public Movie(int vote_count, Double vote_average, String title, String original_title, String release_date, String overview, String poster_path) {
         this.vote_count = vote_count;
         this.vote_average = vote_average;
         this.title = title;
+        this.original_title = original_title;
         this.release_date = release_date;
         this.overview = overview;
         this.poster_path = poster_path;
@@ -43,6 +45,14 @@ public class Movie {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOriginal_title() {
+        return original_title;
+    }
+
+    public void setOriginal_title(String original_title) {
+        this.original_title = original_title;
     }
 
     public String getRelease_date() {

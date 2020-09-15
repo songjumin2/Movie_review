@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.songjumin.moviereview.DetailActivity;
 import com.songjumin.moviereview.R;
 import com.songjumin.moviereview.model.Movie;
 import com.songjumin.moviereview.util.Util;
@@ -37,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, final int position) {
         Movie movie = movieArrayList.get(position);
         String title = movie.getTitle();
         String overview = movie.getOverview();
@@ -51,7 +52,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("title", movieArrayList.get(position).getTitle());
+                intent.putExtra("original_title", movieArrayList.get(position).getOriginal_title());
+                intent.putExtra("poster_path", movieArrayList.get(position).getPoster_path());
+                intent.putExtra("overview", movieArrayList.get(position).getOverview());
+                intent.putExtra("release_date", movieArrayList.get(position).getRelease_date());
+                context.startActivity(intent);
             }
         });
     }

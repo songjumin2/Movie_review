@@ -62,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
                                 int vote_count = jsonObject.getInt("vote_count");
                                 Double vote_average = jsonObject.getDouble("vote_average");
                                 String title = jsonObject.getString("title");
+                                String original_title = jsonObject.getString("original_title");
                                 String release_date = jsonObject.getString("release_date");
                                 String overview = jsonObject.getString("overview");
                                 String poster_path = jsonObject.getString("poster_path");
 
 
-                                Movie movie = new Movie(vote_count, vote_average, title, release_date, overview, poster_path);
+                                Movie movie = new Movie(vote_count, vote_average, title, original_title, release_date, overview, poster_path);
                                 movieArrayList.add(movie);
                             }
 
