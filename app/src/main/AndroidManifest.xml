@@ -14,7 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".MyReviewList"></activity>
+        <activity android:name=".MyFavorite" />
+        <activity android:name=".MyPage" />
+        <activity android:name=".Login" />
+        <activity android:name=".Register" />
+        <activity android:name=".ReviewPage" />
+        <activity android:name=".DetailActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

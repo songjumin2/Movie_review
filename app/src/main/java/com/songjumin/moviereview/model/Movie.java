@@ -1,6 +1,7 @@
 package com.songjumin.moviereview.model;
 
 public class Movie {
+    int id;
     int vote_count;
     Double vote_average;
     String title;
@@ -9,7 +10,8 @@ public class Movie {
     String overview;
     String poster_path;
 
-    public Movie(int vote_count, Double vote_average, String title, String original_title, String release_date, String overview, String poster_path) {
+    public Movie(int id, int vote_count, Double vote_average, String title, String original_title, String release_date, String overview, String poster_path) {
+        this.id = id;
         this.vote_count = vote_count;
         this.vote_average = vote_average;
         this.title = title;
@@ -19,8 +21,15 @@ public class Movie {
         this.poster_path = poster_path;
     }
 
-    public Movie(){
+    public Movie() {
+    }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setMovie_id(int Id) {
+        this.id = id;
     }
 
     public int getVote_count() {
@@ -78,4 +87,5 @@ public class Movie {
     public void setPoster_path(String poster_path) {
         this.poster_path = poster_path;
     }
+
 }

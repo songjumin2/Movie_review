@@ -5,6 +5,7 @@
     <domain-config cleartextTrafficPermitted="true">
 
         <domain includeSubdomains="true">api.themoviedb.org</domain>
+        <domain includeSubdomains="true">contactserver5-env.eba-ajsbdgkc.ap-northeast-2.elasticbeanstalk.com</domain>
 
     </domain-config>
 

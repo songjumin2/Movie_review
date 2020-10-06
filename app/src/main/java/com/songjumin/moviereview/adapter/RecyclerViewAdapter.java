@@ -2,9 +2,12 @@ package com.songjumin.moviereview.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.songjumin.moviereview.DetailActivity;
+import com.songjumin.moviereview.Login;
+import com.songjumin.moviereview.MainActivity;
 import com.songjumin.moviereview.R;
+import com.songjumin.moviereview.ReviewPage;
 import com.songjumin.moviereview.model.Movie;
 import com.songjumin.moviereview.util.Util;
 
@@ -40,19 +46,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, final int position) {
         Movie movie = movieArrayList.get(position);
+        int id = movie.getId();
         String title = movie.getTitle();
         String overview = movie.getOverview();
         String poster_path = movie.getPoster_path();
         // 화면에 표시하라
         holder.txtTitle.setText(title);
         holder.txtOverview.setText(overview);
-
         Glide.with(context).load(Util.BASE_IMAGE_URL + poster_path).into(holder.img);
 
         holder.img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("id",movieArrayList.get(position).getId());
                 intent.putExtra("title", movieArrayList.get(position).getTitle());
                 intent.putExtra("original_title", movieArrayList.get(position).getOriginal_title());
                 intent.putExtra("poster_path", movieArrayList.get(position).getPoster_path());
@@ -61,6 +68,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -80,6 +88,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtOverview = itemView.findViewById(R.id.txtOverview);
             img = itemView.findViewById(R.id.img);
+
 
         }
     }

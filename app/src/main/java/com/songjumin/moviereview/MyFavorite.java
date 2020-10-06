@@ -1,6 +1,6 @@
 package com.songjumin.moviereview;
 
-import androidx.appcompat.app.ActionBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,15 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -25,9 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.songjumin.moviereview.adapter.FavoriteAdapter;
 import com.songjumin.moviereview.adapter.RecyclerViewAdapter;
+import com.songjumin.moviereview.adapter.ReviewAdapter;
+import com.songjumin.moviereview.model.Favorite;
 import com.songjumin.moviereview.model.Movie;
-import com.songjumin.moviereview.model.UserReq;
+import com.songjumin.moviereview.model.Review;
 import com.songjumin.moviereview.util.Util;
 
 import org.json.JSONArray;
@@ -38,89 +36,103 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MyFavorite extends AppCompatActivity {
+
 
     RequestQueue requestQueue;
-
     RecyclerView recyclerView;
-    RecyclerViewAdapter adapter;
-    ArrayList<Movie> movieArrayList = new ArrayList<>();
+    FavoriteAdapter favoriteAdapter;
+    ArrayList<Favorite> favoriteArrayList = new ArrayList<>();
 
     String token;
+    int offset = 0;
+    int limit = 25;
+    int cnt;
 
+    int movie_id;
+    String title;
+    String release_date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_my_favorite);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+        final Intent intent = getIntent();
+        movie_id = intent.getIntExtra("id", 0);
+        title = intent.getStringExtra("title");
+        release_date = intent.getStringExtra("release_date");
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(MyFavorite.this));
 
-        requestQueue = Volley.newRequestQueue(MainActivity.this);
+        getFavorite();
 
+    }
 
+    private void getFavorite() {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
-                Util.BASE_MOVIE_URL,
+                Util.BASE_URL + "/api/v1/favorites" + "?offset=" + offset + "&limit=" + limit,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.i("AAA", response.toString());
-
-                        // results 제이슨 어레이로 오니까 아래처럼
                         try {
-                            JSONArray results = response.getJSONArray("results");
-                            // 어레이 안에있는거 포 루프 돈다
-                            for(int i = 0; i < results.length(); i++){
+                            boolean success = response.getBoolean("success");
+                            if (success == false) {
+                                return;
+                            }
+                            JSONArray items = response.getJSONArray("items");
+                            for (int i = 0; i < items.length(); i++) {
                                 //제이슨 오브젝트로 가져옴
-                                JSONObject jsonObject = results.getJSONObject(i);
+                                JSONObject jsonObject = items.getJSONObject(i);
                                 int id = jsonObject.getInt("id");
-                                int vote_count = jsonObject.getInt("vote_count");
-                                //Double vote_average = jsonObject.getDouble("vote_average");
-                                Double vote_average;
-                                if (results.getJSONObject(i).isNull("vote_average")){
-                                    vote_average = 0.0;
-                                }else {
-                                    vote_average = results.getJSONObject(i).getDouble("vote_average");
-                                }
+                                int favorite_id = jsonObject.getInt("favorite_id");
                                 String title = jsonObject.getString("title");
-                                String original_title = jsonObject.getString("original_title");
                                 String release_date = jsonObject.getString("release_date");
-                                String overview = jsonObject.getString("overview");
                                 String poster_path = jsonObject.getString("poster_path");
 
-
-                                Movie movie = new Movie(id, vote_count, vote_average, title, original_title, release_date, overview, poster_path);
-                                movieArrayList.add(movie);
+                                Favorite favorite = new Favorite(id, favorite_id, title, release_date, poster_path);
+                                favoriteArrayList.add(favorite);
                             }
+                            favoriteAdapter = new FavoriteAdapter(MyFavorite.this, favoriteArrayList);
+                            recyclerView.setAdapter(favoriteAdapter);
 
-                            adapter = new RecyclerViewAdapter(MainActivity.this, movieArrayList);
-                            recyclerView.setAdapter(adapter);
-
+                            offset = offset + response.getInt("cnt");
+                            cnt = response.getInt("cnt");
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.i("AAA", "error : " + error);
                     }
                 }
-        );
-        requestQueue.add(request);
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // 토큰 가져오는 코드 아래 두줄 (해더셋팅함)
+                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                String token = sp.getString("token", null);
 
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", "Bearer " + token);
+                return params;
+            }
+
+        };
+        Volley.newRequestQueue(MyFavorite.this).add(request);
     }
 
     @Override
@@ -142,19 +154,19 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
             token = sp.getString("token", null);
 
-          if (token != null) {
-                Intent i = new Intent(MainActivity.this, MyPage.class);
+            if (token != null) {
+                Intent i = new Intent(MyFavorite.this, MyPage.class);
                 startActivity(i);
                 finish();
-        } else {
-                Intent i = new Intent(MainActivity.this, Login.class);
+            } else {
+                Intent i = new Intent(MyFavorite.this, Login.class);
                 startActivity(i);
                 finish();
-        }
+            }
             return true;
         }
         if (id == R.id.Home){
-            Intent i = new Intent(MainActivity.this, MainActivity.class);
+            Intent i = new Intent(MyFavorite.this, MainActivity.class);
             startActivity(i);
             finish();
         }
@@ -163,11 +175,11 @@ public class MainActivity extends AppCompatActivity {
             token = sp.getString("token", null);
 
             if (token != null) {
-                Intent i = new Intent(MainActivity.this, MyFavorite.class);
+                Intent i = new Intent(MyFavorite.this, MyFavorite.class);
                 startActivity(i);
                 finish();
             } else {
-                Intent i = new Intent(MainActivity.this, Login.class);
+                Intent i = new Intent(MyFavorite.this, Login.class);
                 startActivity(i);
                 finish();
             }
@@ -178,11 +190,11 @@ public class MainActivity extends AppCompatActivity {
             token = sp.getString("token", null);
 
             if (token != null) {
-                Intent i = new Intent(MainActivity.this, MyReviewList.class);
+                Intent i = new Intent(MyFavorite.this, MyReviewList.class);
                 startActivity(i);
                 finish();
             } else {
-                Intent i = new Intent(MainActivity.this, Login.class);
+                Intent i = new Intent(MyFavorite.this, Login.class);
                 startActivity(i);
                 finish();
             }
@@ -191,6 +203,3 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
-
-

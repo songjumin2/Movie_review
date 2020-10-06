@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/Home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="Home"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/MyPage"
+        android:icon="@drawable/ic_baseline_person_outline_24"
+        android:title="mypage"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/MyFavorites"
+        android:title="나의 즐겨찾기 영화 목록" />
+    <item
+        android:id="@+id/MyReview"
+        android:title="나의 리뷰작성 목록" />
+
+</menu>
