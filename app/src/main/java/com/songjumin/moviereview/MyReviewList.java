@@ -66,7 +66,6 @@ public class MyReviewList extends AppCompatActivity {
 
     }
 
-
         private void getNetworkData() {
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.GET,

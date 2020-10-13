@@ -71,11 +71,12 @@ public class MyFavorite extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyFavorite.this));
 
-        getFavorite();
+        getNetworkData();
 
     }
 
-    private void getFavorite() {
+
+    private void getNetworkData() {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 Util.BASE_URL + "/api/v1/favorites" + "?offset=" + offset + "&limit=" + limit,

@@ -59,6 +59,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         ImageView imgPoster;
         TextView txtTitle;
+        TextView txtOriginalTitle;
         TextView txtReleaseDate;
         ImageButton imgMovieFavorite;
 
@@ -68,6 +69,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
             imgPoster = itemView.findViewById(R.id.imgPoster);
             txtTitle = itemView.findViewById(R.id.txtTitle);
+            txtOriginalTitle = itemView.findViewById(R.id.txtOriginalTitle);
             txtReleaseDate = itemView.findViewById(R.id.txtReleaseDate);
             imgMovieFavorite = itemView.findViewById(R.id.imgMovieFavorite);
         }

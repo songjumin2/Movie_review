@@ -22,6 +22,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
+
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
@@ -53,23 +55,21 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/editAverage"
-                android:layout_width="match_parent"
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="평점을 입력해주세요"
-                android:inputType="number" />
+                android:layout_marginTop="5dp"
+                android:backgroundTint="#C11515"
+                android:numStars="5"
+                android:stepSize="1.0" />
 
             <EditText
                 android:id="@+id/editContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:ems="10"

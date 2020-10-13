@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class ReviewPage extends AppCompatActivity {
 
     TextView txtTitle;
     EditText editAverage;
+    RatingBar ratingBar;
     EditText editContent;
     Button btnCancel;
     Button btnReview;
@@ -56,6 +58,7 @@ public class ReviewPage extends AppCompatActivity {
     String token;
 
     RequestQueue requestQueue;
+    ArrayList<Review> reviewArrayList = new ArrayList<>();
 
 
     @Override
@@ -73,36 +76,38 @@ public class ReviewPage extends AppCompatActivity {
         txtTitle = findViewById(R.id.txtTitle);
         txtTitle.setText(title);
 
-        editAverage = findViewById(R.id.editAverage);
+//        editAverage = findViewById(R.id.editAverage);
+        ratingBar = findViewById(R.id.ratingBar);
         editContent = findViewById(R.id.editContent);
         btnCancel = findViewById(R.id.btnCancel);
         btnReview = findViewById(R.id.btnReview);
 
+        ratingBar.setOnRatingBarChangeListener(new Listener());
+
         requestQueue = Volley.newRequestQueue(ReviewPage.this);
-
-
 
 
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String rating = editAverage.getText().toString().trim();
+//                String rating = editAverage.getText().toString().trim();
+                int rating = ratingBar.getNumStars();
                 String content = editContent.getText().toString().trim();
 
-                if (rating.isEmpty() || content.isEmpty()) {
+                if (rating == 0 || content.isEmpty()) {
                     Toast.makeText(ReviewPage.this, "평점과 내용은 필수입니다.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 JSONObject body = new JSONObject();
                 try {
-                    body.put("movie_id",""+movie_id);
+                    body.put("movie_id", "" + movie_id);
                     body.put("rating", "" + rating);
                     body.put("content", content);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i("AAA", "" +movie_id+" " + rating +" "+ content);
+                Log.i("AAA", "" + movie_id + " " + rating + " " + content);
 
                 JsonObjectRequest request = new JsonObjectRequest(
                         Request.Method.POST,
@@ -117,11 +122,11 @@ public class ReviewPage extends AppCompatActivity {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.i("AAA",error.toString());
+                                Log.i("AAA", error.toString());
                             }
                         }
 
-                ){
+                ) {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         // 토큰 가져오는 코드 아래 두줄 (해더셋팅함)
@@ -144,6 +149,7 @@ public class ReviewPage extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -175,12 +181,12 @@ public class ReviewPage extends AppCompatActivity {
             }
             return true;
         }
-        if (id == R.id.Home){
+        if (id == R.id.Home) {
             Intent i = new Intent(ReviewPage.this, MainActivity.class);
             startActivity(i);
             finish();
         }
-        if (id == R.id.MyFavorites){
+        if (id == R.id.MyFavorites) {
             SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
             token = sp.getString("token", null);
 
@@ -195,7 +201,7 @@ public class ReviewPage extends AppCompatActivity {
             }
             return true;
         }
-        if (id == R.id.MyReview){
+        if (id == R.id.MyReview) {
             SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
             token = sp.getString("token", null);
 
@@ -211,5 +217,13 @@ public class ReviewPage extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private class Listener implements RatingBar.OnRatingBarChangeListener {
+        @Override
+        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+            ratingBar.setRating(rating);
+        }
     }
 }
