@@ -90,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(MainActivity.this);
 
+        SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+        token = sp.getString("token", null);
+
+        if (token != null){
+            path = "/api/v1/movies/auth";
+        }else {
+            path = "/api/v1/movies";
+        }
+        getNetworkData(path);
+
 
     }
     @Override
@@ -99,12 +109,12 @@ public class MainActivity extends AppCompatActivity {
         offset = 0;
         order = "desc";
         cnt = 0;
-        getNetworkData();
+        getNetworkData(path);
     }
-    private void getNetworkData(){
+    private void getNetworkData(String path){
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
-                Util.BASE_URL + "/api/v1/movies" + "?offset="+offset + "&limit="+limit,
+                Util.BASE_URL + path + "?offset="+offset + "&limit="+limit,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -153,11 +163,9 @@ public class MainActivity extends AppCompatActivity {
                             offset = offset + response.getInt("cnt");
                             cnt = response.getInt("cnt");
 
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -166,7 +174,18 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 }
-        );
+        ){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // 토큰 가져오는 코드 아래 두줄 (해더셋팅함)
+                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                String token = sp.getString("token", null);
+
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", "Bearer " + token);
+                return params;
+            }
+        };
         requestQueue.add(request);
     }
     private void addNetworkData(String path) {

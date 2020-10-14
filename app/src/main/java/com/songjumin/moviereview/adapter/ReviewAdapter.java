@@ -1,6 +1,7 @@
 package com.songjumin.moviereview.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -13,16 +14,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.songjumin.moviereview.DetailActivity;
 import com.songjumin.moviereview.Login;
 import com.songjumin.moviereview.MainActivity;
+import com.songjumin.moviereview.MyPage;
+import com.songjumin.moviereview.MyReviewList;
 import com.songjumin.moviereview.R;
 import com.songjumin.moviereview.ReviewPage;
 import com.songjumin.moviereview.model.Review;
 import com.songjumin.moviereview.util.Util;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -80,34 +86,42 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             imgDelete = itemView.findViewById(R.id.imgDelete);
             ratingBar = itemView.findViewById(R.id.ratingBar);
 
-            ratingBar.setOnRatingBarChangeListener(new Listener());
 
             imgDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    Log.i("AAA", position + "");
-                    SharedPreferences sp = context.getSharedPreferences(Util.PREFERENCE_NAME, Context.MODE_PRIVATE);
-                    String token = sp.getString("token", null);
-                    Log.i("AAA", "token : " + token);
-                    if (token == null) {
-                        // 로그인 액티비티를 띄운다.
-                        Intent i = new Intent(context, Login.class);
-                        context.startActivity(i);
-                    } else {
-                        Log.i("AAA", "함수호출해야함");
-                        ((DetailActivity)context).deleteReply(position);
-                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("리뷰 삭제").setMessage("리뷰 삭제 하시겠습니까?");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            int position = getAdapterPosition();
+                            Log.i("AAA", position + "");
+                            SharedPreferences sp = context.getSharedPreferences(Util.PREFERENCE_NAME, Context.MODE_PRIVATE);
+                            String token = sp.getString("token", null);
+                            Log.i("AAA", "token : " + token);
+                            if (token == null) {
+                                // 로그인 액티비티를 띄운다.
+                                Intent intent = new Intent(context, Login.class);
+                                context.startActivity(intent);
+                            } else {
+
+                                ((DetailActivity)context).deleteReply(position);
+
+                                reviewArrayList.remove(getAdapterPosition());
+                                notifyItemRemoved(getAdapterPosition());
+                                notifyItemRangeChanged(getAdapterPosition(), reviewArrayList.size());
+                                return;
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("NO", null);
+
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
                 }
             });
-
-        }
-    }
-
-    private class Listener implements RatingBar.OnRatingBarChangeListener {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-            ratingBar.setRating(rating);
         }
     }
 }

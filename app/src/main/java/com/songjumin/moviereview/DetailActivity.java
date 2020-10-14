@@ -213,7 +213,7 @@ public class DetailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        Log.i("AAA", "reply delete : " + response.toString());
                     }
                 },
                 new Response.ErrorListener() {

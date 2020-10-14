@@ -63,7 +63,18 @@
                 android:layout_marginTop="5dp"
                 android:backgroundTint="#C11515"
                 android:numStars="5"
-                android:stepSize="1.0" />
+                android:stepSize="1.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:isIndicator="false"/>
+
+            <TextView
+                android:id="@+id/txtRating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="평점 : " />
 
             <EditText
                 android:id="@+id/editContent"

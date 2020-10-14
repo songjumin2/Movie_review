@@ -56,7 +56,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String release_date = movie.getRelease_date();
         String overview = movie.getOverview();
         String poster_path = movie.getPoster_path();
-        int is_favorite = movie.getIs_favorite();
 
         // 화면에 표시하라
         holder.txtTitle.setText(title);

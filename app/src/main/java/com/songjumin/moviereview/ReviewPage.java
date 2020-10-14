@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +54,7 @@ public class ReviewPage extends AppCompatActivity {
     EditText editContent;
     Button btnCancel;
     Button btnReview;
+    TextView txtRating;
 
     int movie_id;
     String token;
@@ -78,11 +80,17 @@ public class ReviewPage extends AppCompatActivity {
 
 //        editAverage = findViewById(R.id.editAverage);
         ratingBar = findViewById(R.id.ratingBar);
+        txtRating = findViewById(R.id.txtRating);
         editContent = findViewById(R.id.editContent);
         btnCancel = findViewById(R.id.btnCancel);
         btnReview = findViewById(R.id.btnReview);
 
-        ratingBar.setOnRatingBarChangeListener(new Listener());
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                txtRating.setText("평점 : " + rating);
+            }
+        });
 
         requestQueue = Volley.newRequestQueue(ReviewPage.this);
 
@@ -220,10 +228,10 @@ public class ReviewPage extends AppCompatActivity {
     }
 
 
-    private class Listener implements RatingBar.OnRatingBarChangeListener {
-        @Override
-        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-            ratingBar.setRating(rating);
-        }
-    }
+//    private class Listener implements RatingBar.OnRatingBarChangeListener {
+//        @Override
+//        public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+//            ratingBar.setRating(rating);
+//        }
+//    }
 }
