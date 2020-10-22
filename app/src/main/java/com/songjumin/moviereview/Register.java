@@ -100,9 +100,12 @@ public class Register extends AppCompatActivity {
                             Intent i = new Intent(Register.this, MainActivity.class);
                             startActivity(i);
                             finish();
+                        }else {
+                            Toast.makeText(Register.this, "이메일이 중복되었습니다.",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     }
-
                     @Override
                     public void onFailure(Call<UserRes> call, Throwable t) {
 

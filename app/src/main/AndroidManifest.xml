@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MyReviewList"></activity>
+        <activity android:name=".UpdateReview"></activity>
+        <activity android:name=".MyReviewList" />
         <activity android:name=".MyFavorite" />
         <activity android:name=".MyPage" />
         <activity android:name=".Login" />

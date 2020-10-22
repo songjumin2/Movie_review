@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -19,7 +20,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.songjumin.moviereview.adapter.MyReviewAdapter;
 import com.songjumin.moviereview.adapter.ReviewAdapter;
+import com.songjumin.moviereview.model.MyReview;
 import com.songjumin.moviereview.model.Review;
 import com.songjumin.moviereview.util.Util;
 
@@ -34,8 +37,8 @@ import java.util.Map;
 public class MyReviewList extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    ReviewAdapter reviewAdapter;
-    ArrayList<Review> reviewArrayList = new ArrayList<>();
+    MyReviewAdapter myReviewAdapter;
+    ArrayList<MyReview> myReviewArrayList = new ArrayList<>();
 
     RequestQueue requestQueue;
 
@@ -56,17 +59,24 @@ public class MyReviewList extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         requestQueue = Volley.newRequestQueue(MyReviewList.this);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyReviewList.this));
 
-        getNetworkData();
-
     }
-
-        private void getNetworkData() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        myReviewArrayList.clear();
+        offset = 0;
+        order = "desc";
+        cnt = 0;
+        getNetworkData();
+    }
+        public void getNetworkData() {
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.GET,
                     Util.BASE_URL + "/api/v1/reply/review" + "?offset=" + offset + "&limit=" + limit + "&order=" + order,
@@ -75,7 +85,6 @@ public class MyReviewList extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.i("AAA", response.toString());
-
                             // results 제이슨 어레이로 오니까 아래처럼
                             try {
                                 boolean success = response.getBoolean("success");
@@ -87,31 +96,33 @@ public class MyReviewList extends AppCompatActivity {
                                 for (int i = 0; i < items.length(); i++) {
                                     //제이슨 오브젝트로 가져옴
                                     JSONObject jsonObject = items.getJSONObject(i);
-
+                                    int reply_id = jsonObject.getInt("reply_id");
+                                    String title = jsonObject.getString("title");
                                     String content = jsonObject.getString("content");
                                     int rating = jsonObject.getInt("rating");
 
-                                    Review review = new Review(content, rating);
-                                    reviewArrayList.add(review);
+                                    MyReview myReview = new MyReview(reply_id, title, content, rating);
+                                    myReviewArrayList.add(myReview);
                                 }
 
-                                reviewAdapter = new ReviewAdapter(MyReviewList.this, reviewArrayList);
-                                recyclerView.setAdapter(reviewAdapter);
+                                myReviewAdapter = new MyReviewAdapter(MyReviewList.this, myReviewArrayList);
+                                recyclerView.setAdapter(myReviewAdapter);
 
                                 offset = offset + response.getInt("cnt");
                                 cnt = response.getInt("cnt");
 
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.i("AAA", "error : " + error);
+                            Toast.makeText(MyReviewList.this, "본인 리뷰만 삭제 가능합니다.",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     }
             ) {

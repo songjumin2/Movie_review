@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ReviewPage">
+    tools:context=".UpdateReview">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:text="영화 리뷰 작성"
+        android:text="영화 리뷰 수정"
         android:textSize="16sp" />
 
     <androidx.cardview.widget.CardView
@@ -107,12 +107,19 @@
             android:text="취소" />
 
         <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="리뷰 삭제" />
+
+        <Button
             android:id="@+id/btnReview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:text="리뷰 작성" />
+            android:text="리뷰 수정" />
     </LinearLayout>
 </LinearLayout>

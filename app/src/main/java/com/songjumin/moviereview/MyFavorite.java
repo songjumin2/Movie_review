@@ -38,8 +38,6 @@ import java.util.Map;
 
 public class MyFavorite extends AppCompatActivity {
 
-
-    RequestQueue requestQueue;
     RecyclerView recyclerView;
     FavoriteAdapter favoriteAdapter;
     ArrayList<Favorite> favoriteArrayList = new ArrayList<>();

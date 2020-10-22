@@ -1,6 +1,6 @@
 package com.songjumin.moviereview.model;
 
-public class Review {
+public class MyReview {
 
     private int reply_id;
     private String title;
@@ -9,13 +9,13 @@ public class Review {
     private int rating;
     private String created_at;
 
-    public Review(String title, String content, int rating) {
+    public MyReview(String title, String content, int rating) {
         this.title = title;
         this.content = content;
         this.rating = rating;
     }
 
-    public Review(int reply_id, String title, String email, String content, int rating, String created_at) {
+    public MyReview(int reply_id, String title, String email, String content, int rating, String created_at) {
         this.reply_id = reply_id;
         this.title = title;
         this.email = email;
@@ -24,15 +24,15 @@ public class Review {
         this.created_at = created_at;
     }
 
-    public Review(String content, int rating) {
+    public MyReview(String content, int rating) {
         this.content = content;
         this.rating = rating;
     }
 
-    public Review(){
+    public MyReview(){
     }
 
-    public Review(int reply_id, String title, String content, int rating){
+    public MyReview(int reply_id, String title, String content, int rating){
         this.reply_id = reply_id;
         this.title = title;
         this.content = content;
@@ -90,3 +90,4 @@ public class Review {
 
 
 }
+

@@ -1,8 +1,10 @@
 package com.songjumin.moviereview;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.songjumin.moviereview.model.Review;
 import com.songjumin.moviereview.util.Util;
 
 import org.json.JSONException;
@@ -34,43 +37,49 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReviewPage extends AppCompatActivity {
+public class UpdateReview extends AppCompatActivity {
 
     TextView txtTitle;
     RatingBar ratingBar;
+    TextView txtRating;
     EditText editContent;
     Button btnCancel;
     Button btnReview;
-    TextView txtRating;
+    Button btnDelete;
+
+    RequestQueue requestQueue;
 
     int movie_id;
     String token;
 
-
-    RequestQueue requestQueue;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review_page);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        final Intent intent = getIntent();
-        movie_id = intent.getIntExtra("id", 0);
-        String title = intent.getStringExtra("title");
-
+        setContentView(R.layout.activity_update_review);
 
         txtTitle = findViewById(R.id.txtTitle);
-        txtTitle.setText(title);
-
         ratingBar = findViewById(R.id.ratingBar);
         txtRating = findViewById(R.id.txtRating);
         editContent = findViewById(R.id.editContent);
         btnCancel = findViewById(R.id.btnCancel);
         btnReview = findViewById(R.id.btnReview);
+        btnDelete = findViewById(R.id.btnDelete);
+
+
+        final Intent intent = getIntent();
+        int reply_id = intent.getIntExtra("reply_id", 0);
+        movie_id = intent.getIntExtra("id", 0);
+        String title = intent.getStringExtra("title");
+        int rating = intent.getIntExtra("rating",0);
+        String content = intent.getStringExtra("content");
+
+
+        txtTitle.setText(title);
+        ratingBar.setRating(rating);
+        txtRating.setText(""+rating+" 점");
+        editContent.setText(content);
+
+        requestQueue = Volley.newRequestQueue(UpdateReview.this);
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -79,50 +88,49 @@ public class ReviewPage extends AppCompatActivity {
             }
         });
 
+        ratingBar.setRating(0);
+
         LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
         stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(0).setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(1).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
 
-        requestQueue = Volley.newRequestQueue(ReviewPage.this);
-
-
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                String rating = editAverage.getText().toString().trim();
                 double rating = ratingBar.getRating();
                 String content = editContent.getText().toString().trim();
 
                 if (rating == 0 || content.isEmpty()) {
-                    Toast.makeText(ReviewPage.this, "평점과 내용은 필수입니다.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UpdateReview.this, "평점과 내용은 필수입니다.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 JSONObject body = new JSONObject();
                 try {
-                    body.put("movie_id", "" + movie_id);
+                    body.put("reply_id", ""+ reply_id);
                     body.put("rating", "" + rating);
                     body.put("content", content);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i("AAA", "" + movie_id + " " + rating + " " + content);
+                Log.i("AAA",  " "+ reply_id + " " + rating + " " + content);
 
                 JsonObjectRequest request = new JsonObjectRequest(
-                        Request.Method.POST,
+                        Request.Method.PUT,
                         Util.BASE_URL + "/api/v1/reply",
                         body,
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Toast.makeText(ReviewPage.this,"리뷰가 저장되었습니다.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(UpdateReview.this,"리뷰가 수정되었습니다.", Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         },
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(UpdateReview.this,"본인 리뷰만 수정가능합니다.", Toast.LENGTH_LONG).show();
                                 Log.i("AAA", error.toString());
                             }
                         }
@@ -139,19 +147,72 @@ public class ReviewPage extends AppCompatActivity {
                         return params;
                     }
                 };
-                Volley.newRequestQueue(ReviewPage.this).add(request);
+                requestQueue.add(request);
+
             }
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnDelete. setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                AlertDialog.Builder builder = new AlertDialog.Builder(UpdateReview.this);
+                builder.setTitle("리뷰 삭제").setMessage("리뷰 삭제 하시겠습니까?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        JSONObject body = new JSONObject();
+                        try {
+                            body.put("reply_id", reply_id);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        JsonObjectRequest request = new JsonObjectRequest(
+                                Request.Method.POST,
+                                Util.BASE_URL + "/api/v1/reply/delete",
+                                body,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.i("AAA", "reply delete : " + response.toString());
+                                        Toast.makeText(UpdateReview.this,"리뷰가 삭제되었습니다.", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(UpdateReview.this,"본인 리뷰만 삭제가능합니다.", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                        ) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                                String token = sp.getString("token", null);
+
+                                Map<String, String> params = new HashMap<>();
+                                params.put("Authorization", "Bearer " + token);
+                                return params;
+                            }
+                        };
+                        requestQueue.add(request);
+                    }
+                });
+                builder.setNegativeButton("NO", null);
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
-        });
-    }
 
+                });
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                    }
+                });
 
+            }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -172,46 +233,46 @@ public class ReviewPage extends AppCompatActivity {
             token = sp.getString("token", null);
 
             if (token != null) {
-                Intent i = new Intent(ReviewPage.this, MyPage.class);
+                Intent i = new Intent(UpdateReview.this, MyPage.class);
                 startActivity(i);
                 finish();
             } else {
-                Intent i = new Intent(ReviewPage.this, Login.class);
+                Intent i = new Intent(UpdateReview.this, Login.class);
                 startActivity(i);
                 finish();
             }
             return true;
         }
-        if (id == R.id.Home) {
-            Intent i = new Intent(ReviewPage.this, MainActivity.class);
+        if (id == R.id.Home){
+            Intent i = new Intent(UpdateReview.this, MainActivity.class);
             startActivity(i);
             finish();
         }
-        if (id == R.id.MyFavorites) {
+        if (id == R.id.MyFavorites){
             SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
             token = sp.getString("token", null);
 
             if (token != null) {
-                Intent i = new Intent(ReviewPage.this, MyFavorite.class);
+                Intent i = new Intent(UpdateReview.this, MyFavorite.class);
                 startActivity(i);
                 finish();
             } else {
-                Intent i = new Intent(ReviewPage.this, Login.class);
+                Intent i = new Intent(UpdateReview.this, Login.class);
                 startActivity(i);
                 finish();
             }
             return true;
         }
-        if (id == R.id.MyReview) {
+        if (id == R.id.MyReview){
             SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
             token = sp.getString("token", null);
 
             if (token != null) {
-                Intent i = new Intent(ReviewPage.this, MyReviewList.class);
+                Intent i = new Intent(UpdateReview.this, MyReviewList.class);
                 startActivity(i);
                 finish();
             } else {
-                Intent i = new Intent(ReviewPage.this, Login.class);
+                Intent i = new Intent(UpdateReview.this, Login.class);
                 startActivity(i);
                 finish();
             }
@@ -219,5 +280,4 @@ public class ReviewPage extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

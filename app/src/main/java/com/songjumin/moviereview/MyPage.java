@@ -31,8 +31,11 @@ public class MyPage extends AppCompatActivity {
     TextView txtEmail;
     Button btnLogout;
     Button btnMemberOut;
+    Button btnFavorite;
+    Button btnMyReview;
 
     String token;
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +46,15 @@ public class MyPage extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Intent intent = getIntent();
-        String email = intent.getStringExtra("email");
+        email = intent.getStringExtra("email");
 
         txtEmail = findViewById(R.id.txtEmail);
         txtEmail.setText(email);
 
         btnLogout = findViewById(R.id.btnLogout);
         btnMemberOut = findViewById(R.id.btnMemberOut);
-
+        btnFavorite = findViewById(R.id.btnFavorite);
+        btnMyReview = findViewById(R.id.btnMyReview);
 
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +145,40 @@ public class MyPage extends AppCompatActivity {
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
+            }
+        });
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                token = sp.getString("token", null);
+
+                if (token != null) {
+                    Intent i = new Intent(MyPage.this, MyFavorite.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                    Intent i = new Intent(MyPage.this, Login.class);
+                    startActivity(i);
+                    finish();
+                }
+            }
+        });
+        btnMyReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                token = sp.getString("token", null);
+
+                if (token != null) {
+                    Intent i = new Intent(MyPage.this, MyReviewList.class);
+                    startActivity(i);
+                    finish();
+                } else {
+                    Intent i = new Intent(MyPage.this, Login.class);
+                    startActivity(i);
+                    finish();
+                }
             }
         });
     }

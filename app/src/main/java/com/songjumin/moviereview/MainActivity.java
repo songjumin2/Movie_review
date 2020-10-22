@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
@@ -99,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
             path = "/api/v1/movies";
         }
         getNetworkData(path);
-
 
     }
     @Override
@@ -188,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         };
         requestQueue.add(request);
     }
+
     private void addNetworkData(String path) {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,

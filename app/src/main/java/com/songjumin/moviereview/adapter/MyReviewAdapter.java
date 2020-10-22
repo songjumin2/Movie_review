@@ -1,7 +1,6 @@
 package com.songjumin.moviereview.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,70 +10,82 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.songjumin.moviereview.DetailActivity;
 import com.songjumin.moviereview.Login;
-import com.songjumin.moviereview.MainActivity;
-import com.songjumin.moviereview.MyPage;
-import com.songjumin.moviereview.MyReviewList;
 import com.songjumin.moviereview.R;
-import com.songjumin.moviereview.ReviewPage;
 import com.songjumin.moviereview.UpdateReview;
-import com.songjumin.moviereview.model.Review;
+import com.songjumin.moviereview.model.MyReview;
 import com.songjumin.moviereview.util.Util;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
+public class MyReviewAdapter extends RecyclerView.Adapter<MyReviewAdapter.ViewHolder> {
 
     Context context;
-    ArrayList<Review> reviewArrayList;
+    ArrayList<MyReview> myReviewArrayList;
 
-    public ReviewAdapter(Context context, ArrayList<Review> reviewArrayList) {
+    public MyReviewAdapter(Context context, ArrayList<MyReview> myReviewArrayList) {
         this.context = context;
-        this.reviewArrayList = reviewArrayList;
+        this.myReviewArrayList = myReviewArrayList;
     }
 
     @NonNull
     @Override
-    public ReviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyReviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.review_row, parent, false);
+                .inflate(R.layout.myreview_row, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReviewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyReviewAdapter.ViewHolder holder, int position) {
+        MyReview myReview = myReviewArrayList.get(position);
 
-        Review review = reviewArrayList.get(position);
-
-        String title = review.getTitle();
-        int rating = review.getRating();
-        String content = review.getContent();
+        String title = myReview.getTitle();
+        int rating = myReview.getRating();
+        String content = myReview.getContent();
 
         holder.txtTitle.setText(title);
         holder.ratingBar.setRating(rating);
         holder.txtAverage.setText("평점 : "+rating);
         holder.txtReview.setText(content);
 
+        // 리뷰카드뷰 클릭하면 리뷰작성 페이지로 넘어가면서 데이터 그대로 넘어가고 수정페이지로감.
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = context.getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
+                String token = sp.getString("token", null);
+                Log.i("AAA", "token : " + token);
+                if (token == null) {
+                    // 로그인 액티비티를 띄운다.
+                    Toast.makeText(context,"로그인을 해주세요", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, Login.class);
+                    context.startActivity(intent);
+                }else {
+                    Intent i = new Intent(context, UpdateReview.class);
+                    i.putExtra("title", myReviewArrayList.get(position).getTitle());
+                    i.putExtra("reply_id", myReviewArrayList.get(position).getReply_id());
+                    i.putExtra("rating", myReviewArrayList.get(position).getRating());
+                    i.putExtra("content", myReviewArrayList.get(position).getContent());
+                    context.startActivity(i);
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return reviewArrayList.size();
+        return myReviewArrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -84,7 +95,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         TextView txtReview;
         RatingBar ratingBar;
         TextView txtTitle;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -104,6 +114,5 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
         }
     }
+
 }
-
-

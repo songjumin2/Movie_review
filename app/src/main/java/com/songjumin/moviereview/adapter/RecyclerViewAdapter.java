@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -20,6 +21,7 @@ import com.songjumin.moviereview.DetailActivity;
 import com.songjumin.moviereview.Login;
 import com.songjumin.moviereview.MainActivity;
 import com.songjumin.moviereview.R;
+import com.songjumin.moviereview.Register;
 import com.songjumin.moviereview.ReviewPage;
 import com.songjumin.moviereview.model.Movie;
 import com.songjumin.moviereview.util.Util;
@@ -131,9 +133,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         Log.i("AAA", "" + is_favorite);
                         if (is_favorite == 1) {
                             // 별표가 이미 있으면 즐겨찾기 삭제 함수 호출!(실행되게해주는코드임)
+                            Toast.makeText(context, "좋아요 취소되었습니다.", Toast.LENGTH_SHORT).show();
                             ((MainActivity) context).deleteFavorite(position);
                         } else {
                             // 별표가 없으면 즐겨찾기 추가 함수 호출!
+                            Toast.makeText(context, "좋아요 추가되었습니다.", Toast.LENGTH_SHORT).show();
                             ((MainActivity) context).addFavorite(position);
                         }
                     }

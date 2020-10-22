@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -67,7 +68,6 @@ public class DetailActivity extends AppCompatActivity {
 
     int movie_id;
     String title;
-    int reply_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +139,7 @@ public class DetailActivity extends AppCompatActivity {
         getNetworkData();
     }
 
-    private void getNetworkData() {
+    public void getNetworkData() {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 Util.BASE_URL + "/api/v1/reply" + "?movie_id=" + movie_id + "&offset=" + offset + "&limit=" + limit + "&order=" + order,
@@ -191,48 +191,6 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
         );
-        requestQueue.add(request);
-
-
-    }
-    public void deleteReply (final int position) {
-        Log.i("AAA", ""+position);
-        Review review = reviewArrayList.get(position);
-        int reply_id = review.getReply_id();
-
-        JSONObject body = new JSONObject();
-        try {
-            body.put("reply_id", reply_id);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                Util.BASE_URL + "/api/v1/reply/delete",
-                body,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.i("AAA", "reply delete : " + response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-                String token = sp.getString("token", null);
-
-                Map<String, String> params = new HashMap<>();
-                params.put("Authorization", "Bearer " + token);
-                return params;
-            }
-        };
         requestQueue.add(request);
     }
 

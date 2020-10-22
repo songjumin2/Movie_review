@@ -40,7 +40,6 @@ public class Login extends AppCompatActivity {
     Button btnLogin;
     Button btnRegister;
     Button btnCancel;
-    CheckBox autoLogin;
 
     String token;
 
@@ -57,7 +56,6 @@ public class Login extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         btnCancel = findViewById(R.id.btnCancel);
-        autoLogin = findViewById(R.id.autoLogin);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
