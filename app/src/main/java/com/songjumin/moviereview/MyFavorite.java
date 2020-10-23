@@ -1,17 +1,23 @@
 package com.songjumin.moviereview;
 
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -23,9 +29,12 @@ import com.android.volley.toolbox.Volley;
 import com.songjumin.moviereview.adapter.FavoriteAdapter;
 import com.songjumin.moviereview.adapter.RecyclerViewAdapter;
 import com.songjumin.moviereview.adapter.ReviewAdapter;
+import com.songjumin.moviereview.api.NetworkClient;
+import com.songjumin.moviereview.api.UserApi;
 import com.songjumin.moviereview.model.Favorite;
 import com.songjumin.moviereview.model.Movie;
 import com.songjumin.moviereview.model.Review;
+import com.songjumin.moviereview.model.UserRes;
 import com.songjumin.moviereview.util.Util;
 
 import org.json.JSONArray;
@@ -36,7 +45,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+
 public class MyFavorite extends AppCompatActivity {
+
 
     RecyclerView recyclerView;
     FavoriteAdapter favoriteAdapter;
@@ -51,6 +65,7 @@ public class MyFavorite extends AppCompatActivity {
     String title;
     String release_date;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +73,9 @@ public class MyFavorite extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
 
 
         final Intent intent = getIntent();
@@ -69,10 +87,26 @@ public class MyFavorite extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyFavorite.this));
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                        .findLastCompletelyVisibleItemPosition();
+                int totalCount = recyclerView.getAdapter().getItemCount();
+
+                if ((lastPosition + 1) == totalCount){
+                    if(cnt == limit) {
+                        // 네트워크 통해서 데이터를 더 불러오면 된다.
+                        getNetworkData();
+                    }
+                }
+            }
+        });
+
         getNetworkData();
 
     }
-
 
     private void getNetworkData() {
         JsonObjectRequest request = new JsonObjectRequest(
@@ -169,36 +203,7 @@ public class MyFavorite extends AppCompatActivity {
             startActivity(i);
             finish();
         }
-        if (id == R.id.MyFavorites){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyFavorite.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyFavorite.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyFavorite.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyFavorite.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
+
 }

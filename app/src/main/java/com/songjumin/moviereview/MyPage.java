@@ -7,8 +7,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.tabs.TabLayout;
+import com.songjumin.moviereview.adapter.FavoriteAdapter;
+import com.songjumin.moviereview.adapter.MyReviewAdapter;
 import com.songjumin.moviereview.api.NetworkClient;
 import com.songjumin.moviereview.api.UserApi;
 import com.songjumin.moviereview.model.UserRes;
@@ -35,7 +40,7 @@ public class MyPage extends AppCompatActivity {
     Button btnMyReview;
 
     String token;
-    String email;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +50,11 @@ public class MyPage extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Intent intent = getIntent();
-        email = intent.getStringExtra("email");
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
 
         txtEmail = findViewById(R.id.txtEmail);
-        txtEmail.setText(email);
+        txtEmail.setText("회원님 반갑습니다."+"\n"+"마이페이지 화면입니다."+"\n"+"좋아하는 영화 목록과 나의 리뷰 목록을 확인 할 수 있습니다.");
 
         btnLogout = findViewById(R.id.btnLogout);
         btnMemberOut = findViewById(R.id.btnMemberOut);
@@ -216,36 +221,6 @@ public class MyPage extends AppCompatActivity {
             Intent i = new Intent(MyPage.this, MainActivity.class);
             startActivity(i);
             finish();
-        }
-        if (id == R.id.MyFavorites){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyPage.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyPage.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyPage.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyPage.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

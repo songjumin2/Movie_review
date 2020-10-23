@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +40,7 @@ public class Register extends AppCompatActivity {
     RequestQueue requestQueue;
 
     String token;
+    int user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,9 @@ public class Register extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
 
         requestQueue = Volley.newRequestQueue(Register.this);
 
@@ -98,6 +103,7 @@ public class Register extends AppCompatActivity {
                             editor.apply();
 
                             Intent i = new Intent(Register.this, MainActivity.class);
+                            i.putExtra("email", email);
                             startActivity(i);
                             finish();
                         }else {
@@ -166,36 +172,6 @@ public class Register extends AppCompatActivity {
             Intent i = new Intent(Register.this, MainActivity.class);
             startActivity(i);
             finish();
-        }
-        if (id == R.id.MyFavorites){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(Register.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(Register.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(Register.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(Register.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

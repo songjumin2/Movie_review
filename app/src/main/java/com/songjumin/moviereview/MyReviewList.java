@@ -1,5 +1,6 @@
 package com.songjumin.moviereview;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -59,12 +61,32 @@ public class MyReviewList extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
+
 
         requestQueue = Volley.newRequestQueue(MyReviewList.this);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyReviewList.this));
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                        .findLastCompletelyVisibleItemPosition();
+                int totalCount = recyclerView.getAdapter().getItemCount();
+
+                if ((lastPosition + 1) == totalCount){
+                    if(cnt == limit) {
+                        // 네트워크 통해서 데이터를 더 불러오면 된다.
+                        getNetworkData();
+                    }
+                }
+            }
+        });
 
     }
     @Override
@@ -174,36 +196,6 @@ public class MyReviewList extends AppCompatActivity {
             Intent i = new Intent(MyReviewList.this, MainActivity.class);
             startActivity(i);
             finish();
-        }
-        if (id == R.id.MyFavorites){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyReviewList.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyReviewList.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(MyReviewList.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(MyReviewList.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

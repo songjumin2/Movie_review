@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -50,6 +51,9 @@ public class Login extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
 
         editEmail = findViewById(R.id.editEmail);
         editPasswd = findViewById(R.id.editPasswd1);
@@ -168,36 +172,6 @@ public class Login extends AppCompatActivity {
             Intent i = new Intent(Login.this, MainActivity.class);
             startActivity(i);
             finish();
-        }
-        if (id == R.id.MyFavorites){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(Login.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(Login.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview){
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(Login.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(Login.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

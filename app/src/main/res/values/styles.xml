@@ -5,7 +5,14 @@
         <item name="colorPrimary">#232F34</item>
         <item name="colorPrimaryDark">#4A6572</item>
         <item name="colorAccent">#4A6572</item>
+
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="fontFamily">@font/nanumbarunpenb</item>
+        
+
+
     </style>
+
 
 
 </resources>

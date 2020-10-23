@@ -58,6 +58,9 @@ public class ReviewPage extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setSubtitleTextColor(Color.WHITE);
+
         final Intent intent = getIntent();
         movie_id = intent.getIntExtra("id", 0);
         String title = intent.getStringExtra("title");
@@ -186,36 +189,6 @@ public class ReviewPage extends AppCompatActivity {
             Intent i = new Intent(ReviewPage.this, MainActivity.class);
             startActivity(i);
             finish();
-        }
-        if (id == R.id.MyFavorites) {
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(ReviewPage.this, MyFavorite.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(ReviewPage.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
-        }
-        if (id == R.id.MyReview) {
-            SharedPreferences sp = getSharedPreferences(Util.PREFERENCE_NAME, MODE_PRIVATE);
-            token = sp.getString("token", null);
-
-            if (token != null) {
-                Intent i = new Intent(ReviewPage.this, MyReviewList.class);
-                startActivity(i);
-                finish();
-            } else {
-                Intent i = new Intent(ReviewPage.this, Login.class);
-                startActivity(i);
-                finish();
-            }
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
