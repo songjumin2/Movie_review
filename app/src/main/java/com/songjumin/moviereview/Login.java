@@ -72,7 +72,7 @@ public class Login extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (passwd.isEmpty() || passwd.length() < 4 || passwd.length() > 12) {
+                if (passwd.isEmpty() || passwd.length() < 6 || passwd.length() > 12) {
                     Toast.makeText(Login.this, "비밀번호 규칙에 맞지 않습니다.",
                             Toast.LENGTH_SHORT).show();
                     return;
